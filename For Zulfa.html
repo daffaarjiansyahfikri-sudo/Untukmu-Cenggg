@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Untukmu — Sebuah Halaman Romantis</title>
+
+  <!-- Google Font (opsional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Basic reset */
+    * {box-sizing: border-box; margin: 0; padding: 0}
+    html,body {height:100%}
+    body {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(120deg, #0f172a 0%, #1e293b 50%, #3b0754 100%);
+      color: #fff;
+      overflow: hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Container for everything */
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    /* Soft vignette to focus center */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.25) 100%);
+    }
+
+    /* The central card with message */
+    .card {
+      position: relative;
+      z-index: 10;
+      width: min(880px, 92%);
+      max-width: 880px;
+      text-align: center;
+      padding: 2.2rem 2.5rem;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      box-shadow: 0 8px 32px rgba(8,10,20,0.6);
+      backdrop-filter: blur(6px) saturate(120%);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    h1 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+      color: #fff;
+    }
+
+    p.lead {
+      color: #f3e8ff;
+      margin-bottom: 1rem;
+      font-size: clamp(1rem, 1.6vw, 1.18rem);
+      opacity: 0.95;
+    }
+
+    /* Typewriter-style line that fades in */
+    .typewriter {
+      display:block;
+      margin: 1rem auto 1.4rem;
+      font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+      font-weight: 500;
+      color: #ffe8f8;
+      min-height: 1.6em;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* CTA */
+    .actions {display:flex; gap:12px; justify-content:center; margin-top:1rem}
+    .btn {
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #fff;
+      padding: .6rem 1.05rem;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      backdrop-filter: blur(6px);
+    }
+    .btn:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(88, 24, 69, 0.18) }
+
+    /* Small credit */
+    .credit { margin-top:.85rem; font-size:.84rem; color:rgba(255,255,255,0.65) }
+
+    /* Floating hearts background */
+    .hearts {
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      overflow:hidden;
+    }
+
+    .heart {
+      position: absolute;
+      width: 36px;
+      height: 32px;
+      transform: translateY(120vh) rotate(0deg);
+      opacity: 0.9;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+      will-change: transform, opacity;
+      background: linear-gradient(180deg, #ff7ab6 0%, #ff4d82 100%);
+      clip-path: path('M12 21 L2 11 C -1 8 1.5 3 6 3 C 9 3 12 6.5 12 6.5 C 12 6.5 15 3 18 3 C 22.5 3 25 8 22 11 L12 21 Z');
+      /* older browsers: fallback shape using pseudo elements in JS created hearts */
+    }
+
+    /* For browsers that don't support clip-path via path, we'll use pseudo hearts drawn in JS as SVG elements. */
+    /* Animation classes applied by JS with custom durations & delays */
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) scale(0.6) rotate(-10deg); opacity: 0 }
+      10%  { opacity: 1 }
+      50%  { transform: translateY(40vh) scale(1) rotate(12deg) }
+      100% { transform: translateY(-10vh) scale(0.9) rotate(25deg); opacity: 0 }
+    }
+
+    /* Respect user motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      .heart { animation: none !important; transform: translateY(0) !important; opacity: 0.7 }
+      .btn { transition: none }
+    }
+
+    /* small screens tweak */
+    @media (max-width:520px) {
+      .card { padding: 1.6rem; border-radius: 14px }
+      .heart { width: 30px; height: 26px }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="stage" role="main">
+    <div class="hearts" aria-hidden="true" id="hearts"></div>
+
+    <div class="vignette" aria-hidden="true"></div>
+
+    <article class="card" aria-labelledby="title">
+      <h1 id="title">Untukmu — <span style="color:#ffd6ea">Zulfa Cantik</span></h1>
+      <p class="lead">Ada hal-hal kecil yang membuat hari lebih berwarna. Ini untukmu — semoga membuatmu tersenyum.</p>
+
+      <div class="typewriter" id="typewriter" aria-live="polite" aria-atomic="true"></div>
+
+      <div class="actions">
+        <button class="btn" id="revealBtn" title="Tampilkan pesan">Tunjukkan Pesan</button>
+        <button class="btn" id="toggleHearts" title="Matikan / Nyalakan animasi hati">Matikan Hati</button>
+      </div>
+
+      <div class="credit">Dibuat  Dapa untuk Zulfaa seng cantik dewe.</div>
+    </article>
+  </div>
+
+  <!-- Optional: You can add a soft background music file by uncommenting below and providing audio source.
+  <audio id="softMusic" loop src="audio/soft-melody.mp3"></audio>
+  -->
+
+  <script>
+    /*
+      Script:
+      - Membuat animasi hati dinamis (random posisi, ukuran, durasi)
+      - Efek typewriter untuk pesan romantis bergantian
+      - Kontrol untuk menonaktifkan animasi hati
+      - Mematuhi prefers-reduced-motion
+    */
+
+    (function(){
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ====== TYPEWRITER MESSAGES ====== */
+      const messages = [
+        "Kau membuat hari-hariku lebih hangat daripada secangkir kopi.",
+        "Dalam setiap senyummu, aku menemukan tempat pulang.",
+        "Terima kasih sudah menjadi cerita favoritku.",
+        "Bersamamu sederhana menjadi luar biasa."
+      ];
+      const typeEl = document.getElementById("typewriter");
+      let msgIndex = 0;
+
+      // Typewriter effect
+      function typeMessage(msg, cb) {
+        if (prefersReducedMotion) {
+          typeEl.textContent = msg;
+          if (cb) cb();
+          return;
+        }
+        typeEl.textContent = "";
+        let i = 0;
+        const speed = 30; // ms per char
+        const t = setInterval(() => {
+          typeEl.textContent += msg.charAt(i);
+          i++;
+          if (i >= msg.length) {
+            clearInterval(t);
+            if (cb) setTimeout(cb, 900);
+          }
+        }, speed);
+      }
+
+      function showNextMessage() {
+        typeMessage(messages[msgIndex], () => {
+          msgIndex = (msgIndex + 1) % messages.length;
+          // rotate messages every 4.5s unless reduced-motion
+          if (!prefersReducedMotion) setTimeout(showNextMessage, 3000);
+        });
+      }
+
+      // Start with first message (but wait a bit for nicer entrance)
+      setTimeout(() => showNextMessage(), 350);
+
+      /* ====== HEARTS BACKGROUND ====== */
+      const heartsContainer = document.getElementById("hearts");
+      let heartsOn = true;
+      const heartCount = 12; // reasonable number for performance
+
+      // Helper to create an SVG heart (fallback for clip-path)
+      function createSVGHeart(color, size) {
+        const ns = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(ns, "svg");
+        svg.setAttribute("width", size);
+        svg.setAttribute("height", size);
+        svg.setAttribute("viewBox", "0 0 32 29");
+        svg.style.display = "block";
+
+        const path = document.createElementNS(ns, "path");
+        path.setAttribute("d", "M23.6 0c-2.7 0-5 1.6-6 4-1-2.4-3.3-4-6-4C6 0 0 5 0 10.8 0 18 11.2 25.1 16 29c4.8-3.9 16-11 16-18.2C32 5 26 0 23.6 0z");
+        path.setAttribute("fill", color);
+        svg.appendChild(path);
+        return svg;
+      }
+
+      function random(min, max) { return Math.random() * (max - min) + min }
+
+      function spawnHeart(index) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        const size = random(20, 56);
+        heart.style.width = size + 'px';
+        heart.style.height = (size * 0.9) + 'px'; // slightly shorter
+        const left = random(-6, 98); // allow some off-screen start
+        heart.style.left = left + '%';
+
+        // color gradient variation
+        const r = Math.floor(random(220,255));
+        const g = Math.floor(random(60,120));
+        const b = Math.floor(random(90,155));
+        heart.style.background = `linear-gradient(180deg, rgb(${r},${g},${b}) 0%, rgb(${Math.max(r-30,200)},${Math.max(g-20,40)},${Math.max(b-30,70)}) 100%)`;
+
+        // custom animation duration & delay
+        const duration = random(8, 18); // seconds
+        const delay = random(-8, 0);    // negative delay so some hearts already mid-air
+        heart.style.animation = `floatUp ${duration}s linear ${delay}s forwards`;
+        heart.style.opacity = random(0.65, 0.95);
+
+        // fallback: if clip-path path unsupported, replace with SVG heart
+        const supportsPath = CSS.supports("clip-path: path('M0 0')");
+        if (!supportsPath) {
+          const svg = createSVGHeart(`rgb(${r},${g},${b})`, Math.round(size));
+          heart.style.background = 'transparent';
+          heart.appendChild(svg);
+        } else {
+          // modern browsers: keep CSS clip-path to form heart-ish shapes for speed
+          try {
+            heart.style.clipPath = "path('M12 21 L2 11 C -1 8 1.5 3 6 3 C 9 3 12 6.5 12 6.5 C 12 6.5 15 3 18 3 C 22.5 3 25 8 22 11 L12 21 Z')";
+          } catch(e){}
+        }
+
+        heartsContainer.appendChild(heart);
+
+        // cleanup after animation ends
+        setTimeout(() => {
+          heart.remove();
+          if (heartsOn) spawnHeart(index); // replace to keep count steady
+        }, (duration + Math.abs(delay)) * 1000 + 500);
+      }
+
+      // Initial population
+      if (!prefersReducedMotion) {
+        for (let i=0;i<heartCount;i++) spawnHeart(i);
+      }
+
+      // Toggle hearts with button
+      const toggleBtn = document.getElementById("toggleHearts");
+      toggleBtn.addEventListener('click', () => {
+        heartsOn = !heartsOn;
+        if (!heartsOn) {
+          heartsContainer.innerHTML = '';
+          toggleBtn.textContent = 'Nyalakan Hati';
+        } else {
+          for (let i=0;i<heartCount;i++) spawnHeart(i);
+          toggleBtn.textContent = 'Matikan Hati';
+        }
+      });
+
+      // Reveal button shows next full message instantly and briefly highlights card
+      document.getElementById('revealBtn').addEventListener('click', () => {
+        // show immediate message that is more direct
+        const reveal = "Kau lebih indah dari kata yang bisa kugoreskan. — untukmu";
+        if (prefersReducedMotion) {
+          typeEl.textContent = reveal;
+        } else {
+          // temporarily stop the rotating messages and show reveal then resume
+          typeMessage(reveal, () => {
+            setTimeout(() => {
+              // resume where we left off (do next message)
+              typeEl.textContent = "";
+              showNextMessage();
+            }, 2200);
+          });
+        }
+        // small pulse
+        const card = document.querySelector('.card');
+        card.animate([
+          { transform: 'scale(1)', boxShadow: '0 8px 32px rgba(8,10,20,0.6)' },
+          { transform: 'scale(1.02)', boxShadow: '0 18px 44px rgba(88, 24, 69, 0.18)' },
+          { transform: 'scale(1)', boxShadow: '0 8px 32px rgba(8,10,20,0.6)' }
+        ], { duration: 800, easing: 'ease-out' });
+      });
+
+      // Accessibility: allow keyboard to toggle hearts with 'h'
+      window.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'h') toggleBtn.click();
+      });
+
+    })();
+  </script>
+</body>
+</html>
